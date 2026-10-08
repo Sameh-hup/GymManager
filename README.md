@@ -48,8 +48,6 @@
 
 ## 🖼️ Screenshots
 
-> *(Add screenshots here after recording your video)*
-
 | Dashboard | Members | Memberships |
 |-----------|---------|-------------|
 | ![Dashboard](screenshots/dashboard.png) | ![Members](screenshots/members.png) | ![Memberships](screenshots/memberships.png) |
