@@ -1,0 +1,91 @@
+@model GymManager.Models.Membership
+
+@{
+    ViewData["Title"] = "Membership Details";
+    var englishCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+    var isExpired = Model.EndDate < DateTime.Today;
+    var isExpiringSoon = !isExpired && Model.EndDate <= DateTime.Today.AddDays(7);
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-title-group">
+        <a asp-action="Index" class="btn-gym-outline btn-sm mb-2">
+            <i class="bi bi-arrow-left"></i> Back to Memberships
+        </a>
+        <h1>Membership Overview</h1>
+        <p>Complete details about this athlete subscription pass.</p>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn-gym-primary">
+            <i class="bi bi-pencil-square"></i> Edit
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn-gym-outline text-danger">
+            <i class="bi bi-trash3"></i> Delete
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="gym-card">
+            <div class="gym-card-header">
+                <h5 class="gym-card-title d-flex align-items-center gap-2">
+                    <i class="bi bi-person-badge-fill text-primary"></i> Subscription Pass #@Model.Id
+                </h5>
+                @if (isExpired)
+                {
+                    <span class="gym-badge gym-badge-danger">Expired</span>
+                }
+                else if (isExpiringSoon)
+                {
+                    <span class="gym-badge gym-badge-warning"><i class="bi bi-clock"></i> Expiring Soon</span>
+                }
+                else
+                {
+                    <span class="gym-badge gym-badge-success"><span class="gym-status-pulse"></span> Active</span>
+                }
+            </div>
+            <div class="gym-card-body">
+                <div class="row g-4">
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label text-muted small text-uppercase">Member Name</label>
+                        <div class="fw-bold fs-5 text-dark">
+                            <i class="bi bi-person text-primary me-1"></i>@(Model.Member?.FullName ?? "Unknown Member")
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label text-muted small text-uppercase">Membership Plan</label>
+                        <div class="fw-bold fs-5 text-dark">
+                            <span class="gym-badge gym-badge-primary fs-6">@(Model.MembershipPlan?.Name ?? "Custom Plan")</span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label text-muted small text-uppercase">Start Date</label>
+                        <div class="fw-semibold fs-6 text-dark">
+                            <i class="bi bi-calendar-event text-secondary me-1"></i>@Model.StartDate.ToString("dddd, dd MMMM yyyy", englishCulture)
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label text-muted small text-uppercase">End Date</label>
+                        <div class="fw-bold fs-6 @(isExpired ? "text-danger" : "text-dark")">
+                            <i class="bi bi-calendar-check @(isExpired ? "text-danger" : "text-success") me-1"></i>@Model.EndDate.ToString("dddd, dd MMMM yyyy", englishCulture)
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label text-muted small text-uppercase">Price at Purchase</label>
+                        <div class="p-3 bg-light rounded-3 border d-flex align-items-center justify-content-between">
+                            <span class="text-secondary fw-semibold">Total Subscription Amount</span>
+                            <span class="fw-bold fs-4 text-success">$@Model.PriceAtPurchase.ToString("N2", englishCulture)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

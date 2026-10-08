@@ -1,0 +1,499 @@
+/* =========================================================
+   GymManager | Minimalist SaaS Design System
+   Palette: Pure Slate, Clean White & Electric Indigo
+   ========================================================= */
+
+:root {
+    /* Primary & Brand */
+    --gym-primary: #4f46e5;
+    --gym-primary-hover: #4338ca;
+    --gym-primary-light: #eef2ff;
+    --gym-primary-border: #c7d2fe;
+
+    /* Neutrals & Surfaces */
+    --gym-bg: #f8fafc;
+    --gym-surface: #ffffff;
+    --gym-surface-hover: #f1f5f9;
+    --gym-border: #e2e8f0;
+    --gym-border-light: #f1f5f9;
+
+    /* Typography */
+    --gym-text-main: #0f172a;
+    --gym-text-secondary: #475569;
+    --gym-text-muted: #94a3b8;
+
+    /* Status Colors */
+    --gym-success: #10b981;
+    --gym-success-light: #ecfdf5;
+    --gym-success-text: #047857;
+
+    --gym-warning: #f59e0b;
+    --gym-warning-light: #fffbeb;
+    --gym-warning-text: #b45309;
+
+    --gym-danger: #ef4444;
+    --gym-danger-light: #fef2f2;
+    --gym-danger-text: #b91c1c;
+
+    --gym-info: #0ea5e9;
+    --gym-info-light: #f0f9ff;
+    --gym-info-text: #0369a1;
+
+    /* Elevations & Radii */
+    --gym-radius-sm: 8px;
+    --gym-radius-md: 12px;
+    --gym-radius-lg: 16px;
+    --gym-radius-xl: 20px;
+    --gym-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --gym-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    --gym-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.07), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+}
+
+/* Base Document */
+html {
+    font-size: 15px;
+    scroll-behavior: smooth;
+}
+
+body.gym-body {
+    background-color: var(--gym-bg);
+    color: var(--gym-text-main);
+    font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    -webkit-font-smoothing: antialiased;
+}
+
+.gym-main {
+    flex: 1 0 auto;
+    animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* =========================================================
+   Animations & Transitions
+   ========================================================= */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes pulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
+/* =========================================================
+   Header & Navbar
+   ========================================================= */
+
+.gym-header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--gym-border);
+    z-index: 1020;
+}
+
+.gym-navbar {
+    padding: 0.85rem 0;
+}
+
+.gym-brand {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--gym-text-main);
+    text-decoration: none;
+    letter-spacing: -0.5px;
+}
+
+.gym-brand-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: var(--gym-radius-md);
+    background: var(--gym-primary);
+    color: #ffffff;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+    transition: transform 0.2s ease;
+}
+
+.gym-brand:hover .gym-brand-icon {
+    transform: scale(1.05);
+}
+
+.gym-toggler {
+    border: 1px solid var(--gym-border);
+    padding: 0.35rem 0.65rem;
+    font-size: 1.25rem;
+    border-radius: var(--gym-radius-sm);
+    color: var(--gym-text-secondary);
+}
+
+.gym-nav-list {
+    gap: 0.25rem;
+}
+
+.gym-nav-link {
+    font-size: 0.925rem;
+    font-weight: 600;
+    color: var(--gym-text-secondary) !important;
+    padding: 0.55rem 1rem !important;
+    border-radius: var(--gym-radius-md);
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.gym-nav-link:hover {
+    color: var(--gym-primary) !important;
+    background-color: var(--gym-primary-light);
+    transform: translateY(-1px);
+}
+
+.gym-nav-link.active {
+    color: var(--gym-primary) !important;
+    background-color: var(--gym-primary-light);
+    font-weight: 700;
+}
+
+.gym-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    background: var(--gym-success-light);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    border-radius: 999px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gym-success-text);
+}
+
+.gym-status-pulse {
+    width: 8px;
+    height: 8px;
+    background: var(--gym-success);
+    border-radius: 50%;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: pulse 2s infinite;
+}
+
+/* =========================================================
+   Page Header (Standardized Title & Action Area)
+   ========================================================= */
+
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.75rem;
+}
+
+.page-title-group h1 {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: var(--gym-text-main);
+    letter-spacing: -0.5px;
+    margin: 0;
+}
+
+.page-title-group p {
+    font-size: 0.9rem;
+    color: var(--gym-text-muted);
+    margin: 0.25rem 0 0 0;
+}
+
+/* =========================================================
+   Cards & Containers
+   ========================================================= */
+
+.gym-card {
+    background: var(--gym-surface);
+    border: 1px solid var(--gym-border);
+    border-radius: var(--gym-radius-lg);
+    box-shadow: var(--gym-shadow-sm);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    overflow: hidden;
+}
+
+.gym-card-hover:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--gym-shadow-hover);
+}
+
+.gym-card-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid var(--gym-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.gym-card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--gym-text-main);
+    margin: 0;
+}
+
+.gym-card-body {
+    padding: 1.5rem;
+}
+
+/* =========================================================
+   Stat & KPI Metric Cards
+   ========================================================= */
+
+.stat-card {
+    background: var(--gym-surface);
+    border: 1px solid var(--gym-border);
+    border-radius: var(--gym-radius-lg);
+    padding: 1.4rem;
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    box-shadow: var(--gym-shadow-sm);
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--gym-shadow);
+    border-color: var(--gym-primary-border);
+}
+
+.stat-icon-box {
+    width: 52px;
+    height: 52px;
+    border-radius: var(--gym-radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover .stat-icon-box {
+    transform: scale(1.08);
+}
+
+.stat-icon-indigo { background: #eef2ff; color: #4f46e5; }
+.stat-icon-emerald { background: #ecfdf5; color: #10b981; }
+.stat-icon-amber { background: #fffbeb; color: #f59e0b; }
+.stat-icon-rose { background: #fef2f2; color: #ef4444; }
+.stat-icon-sky { background: #f0f9ff; color: #0284c7; }
+
+.stat-value {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: var(--gym-text-main);
+    line-height: 1.1;
+    letter-spacing: -0.5px;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gym-text-muted);
+    margin-bottom: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* =========================================================
+   SaaS Tables
+   ========================================================= */
+
+.gym-table-container {
+    background: var(--gym-surface);
+    border: 1px solid var(--gym-border);
+    border-radius: var(--gym-radius-lg);
+    box-shadow: var(--gym-shadow-sm);
+    overflow: hidden;
+}
+
+.gym-table {
+    width: 100%;
+    margin-bottom: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.gym-table thead th {
+    background-color: #f8fafc;
+    color: var(--gym-text-secondary);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    padding: 0.95rem 1.25rem;
+    border-bottom: 1px solid var(--gym-border);
+    border-top: none;
+    white-space: nowrap;
+}
+
+.gym-table tbody td {
+    padding: 1.1rem 1.25rem;
+    color: var(--gym-text-main);
+    font-size: 0.925rem;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--gym-border);
+}
+
+.gym-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.gym-table tbody tr {
+    transition: background-color 0.15s ease;
+}
+
+.gym-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* =========================================================
+   Badges & Pills
+   ========================================================= */
+
+.gym-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.775rem;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    white-space: nowrap;
+}
+
+.gym-badge-success { background: var(--gym-success-light); color: var(--gym-success-text); }
+.gym-badge-warning { background: var(--gym-warning-light); color: var(--gym-warning-text); }
+.gym-badge-danger { background: var(--gym-danger-light); color: var(--gym-danger-text); }
+.gym-badge-info { background: var(--gym-info-light); color: var(--gym-info-text); }
+.gym-badge-primary { background: var(--gym-primary-light); color: var(--gym-primary); }
+
+/* =========================================================
+   Buttons & Inputs
+   ========================================================= */
+
+.btn-gym-primary {
+    background: var(--gym-primary);
+    color: #ffffff;
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--gym-radius-md);
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 2px 4px rgba(79, 70, 229, 0.2);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    text-decoration: none;
+}
+
+.btn-gym-primary:hover {
+    background: var(--gym-primary-hover);
+    color: #ffffff;
+    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.3);
+    transform: translateY(-1px);
+}
+
+.btn-gym-outline {
+    background: var(--gym-surface);
+    color: var(--gym-text-secondary);
+    font-weight: 600;
+    font-size: 0.9rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: var(--gym-radius-md);
+    border: 1px solid var(--gym-border);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.btn-gym-outline:hover {
+    background: var(--gym-bg);
+    color: var(--gym-text-main);
+    border-color: var(--gym-text-muted);
+    transform: translateY(-1px);
+}
+
+.btn-action-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--gym-radius-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--gym-border);
+    background: var(--gym-surface);
+    color: var(--gym-text-secondary);
+    transition: all 0.15s ease;
+    text-decoration: none;
+}
+
+.btn-action-icon:hover {
+    background: var(--gym-primary-light);
+    color: var(--gym-primary);
+    border-color: var(--gym-primary-border);
+    transform: scale(1.05);
+}
+
+.btn-action-icon.delete:hover {
+    background: var(--gym-danger-light);
+    color: var(--gym-danger);
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+/* Forms */
+.form-control, .form-select {
+    border-radius: var(--gym-radius-md);
+    border: 1px solid var(--gym-border);
+    padding: 0.65rem 0.95rem;
+    font-size: 0.925rem;
+    color: var(--gym-text-main);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--gym-primary);
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.12);
+}
+
+.form-label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gym-text-secondary);
+    margin-bottom: 0.4rem;
+}
+
+/* Footer */
+.gym-footer {
+    border-top: 1px solid var(--gym-border);
+    background: var(--gym-surface);
+}

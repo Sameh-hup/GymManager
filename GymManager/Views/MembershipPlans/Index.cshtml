@@ -1,0 +1,128 @@
+@model IEnumerable<GymManager.Models.MembershipPlan>
+
+@{
+    ViewData["Title"] = "Membership Plans";
+    var englishCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-title-group">
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="gym-badge gym-badge-primary">
+                <i class="bi bi-card-checklist"></i> Subscriptions
+            </span>
+            <span class="gym-badge gym-badge-info">
+                @Model.Count() Packages Available
+            </span>
+        </div>
+        <h1>Membership Plans</h1>
+        <p>Configure pricing, duration, and access packages for your members.</p>
+    </div>
+
+    <div>
+        <a asp-action="Create" class="btn-gym-primary">
+            <i class="bi bi-plus-lg"></i> Create New Plan
+        </a>
+    </div>
+</div>
+
+<!-- Table Card -->
+<div class="gym-card">
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="gym-table">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Plan Name</th>
+                        <th>Duration</th>
+                        <th>Price</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-3 bg-primary-subtle text-primary p-2 d-flex align-items-center justify-content-center"
+                                         style="width: 36px; height: 36px;">
+                                        <i class="bi bi-award-fill"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">@item.Name</div>
+                                        <small class="text-muted">Plan ID: #@item.Id</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="fw-semibold text-dark">
+                                    <i class="bi bi-clock-history me-1 text-muted"></i>@item.DurationInDays Days
+                                </span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-success fs-6">
+                                    $@item.Price.ToString("N2", englishCulture)
+                                </span>
+                            </td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.Description))
+                                {
+                                    <span class="text-muted small text-truncate d-inline-block" style="max-width: 250px;" title="@item.Description">
+                                        @item.Description
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic small">No description</span>
+                                }
+                            </td>
+                            <td>
+                                @if (item.IsActive)
+                                {
+                                    <span class="gym-badge gym-badge-success">
+                                        <span class="gym-status-pulse"></span> Active
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="gym-badge gym-badge-danger">
+                                        Inactive
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-inline-flex gap-1">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn-action-icon" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn-action-icon" title="Edit Plan">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn-action-icon delete" title="Delete Plan">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="gym-card-body text-center py-5">
+            <div class="text-muted fs-1 mb-3"><i class="bi bi-card-checklist"></i></div>
+            <h5 class="fw-bold text-dark">No membership plans created</h5>
+            <p class="text-muted mb-4">Create membership packages (Monthly, Annual, VIP) to start offering them to members.</p>
+            <a asp-action="Create" class="btn-gym-primary">
+                <i class="bi bi-plus-lg"></i> Create First Plan
+            </a>
+        </div>
+    }
+</div>

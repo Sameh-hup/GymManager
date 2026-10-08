@@ -1,0 +1,94 @@
+@model GymManager.Models.Payment
+
+@{
+    ViewData["Title"] = "Payment Receipt";
+    var englishCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+    var initial = string.IsNullOrEmpty(Model.Membership?.Member?.FullName) ? "M" : Model.Membership.Member.FullName.Substring(0, 1).ToUpper();
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-title-group">
+        <a asp-action="Index" class="btn-gym-outline btn-sm mb-2">
+            <i class="bi bi-arrow-left"></i> Back to Payments
+        </a>
+        <h1>Payment Receipt</h1>
+        <p>Detailed receipt and verification for transaction #@Model.Id.</p>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn-gym-primary">
+            <i class="bi bi-pencil-square"></i> Edit
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn-gym-outline text-danger">
+            <i class="bi bi-trash3"></i> Delete
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="gym-card">
+            <div class="gym-card-header">
+                <h5 class="gym-card-title d-flex align-items-center gap-2">
+                    <i class="bi bi-receipt-cutoff text-primary"></i> Receipt #@Model.Id
+                </h5>
+                <span class="gym-badge gym-badge-success">
+                    <i class="bi bi-check2-circle me-1"></i> Paid
+                </span>
+            </div>
+            <div class="gym-card-body">
+                <div class="row g-4">
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label text-muted small text-uppercase">Member Name</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center"
+                                 style="width: 34px; height: 34px; font-size: 0.85rem;">
+                                @initial
+                            </div>
+                            <span class="fw-bold fs-6 text-dark">@(Model.Membership?.Member?.FullName ?? "Unknown Member")</span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label text-muted small text-uppercase">Membership Plan</label>
+                        <div class="fw-bold fs-6 text-dark">
+                            <span class="gym-badge gym-badge-primary">@(Model.Membership?.MembershipPlan?.Name ?? "Custom Plan")</span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label text-muted small text-uppercase">Transaction Date & Time</label>
+                        <div class="fw-bold fs-6 text-dark">
+                            <i class="bi bi-calendar3 text-muted me-1"></i>@Model.PaymentDate.ToString("dd MMM yyyy · hh:mm tt", englishCulture)
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-sm-6">
+                        <label class="form-label text-muted small text-uppercase">Payment Method</label>
+                        <div>
+                            <span class="gym-badge gym-badge-info">
+                                <i class="bi bi-credit-card me-1"></i>@Model.PaymentMethod
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label text-muted small text-uppercase">Total Amount Paid</label>
+                        <div class="p-3 bg-light rounded-3 border d-flex align-items-center justify-content-between">
+                            <span class="text-secondary fw-semibold">Net Received</span>
+                            <span class="fw-bold fs-3 text-success">$@Model.Amount.ToString("N2", englishCulture)</span>
+                        </div>
+                    </div>
+
+                    <div class="col-12">
+                        <label class="form-label text-muted small text-uppercase">Notes & Comments</label>
+                        <div class="p-3 bg-light rounded-3 border text-secondary">
+                            @(string.IsNullOrWhiteSpace(Model.Notes) ? "No notes added for this payment." : Model.Notes)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

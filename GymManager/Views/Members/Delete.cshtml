@@ -1,0 +1,60 @@
+@model GymManager.Models.Member
+
+@{
+    ViewData["Title"] = "Delete Member";
+    var englishCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-title-group">
+        <a asp-action="Index" class="btn-gym-outline btn-sm mb-2">
+            <i class="bi bi-arrow-left"></i> Back to Members
+        </a>
+        <h1 class="text-danger">Delete Member</h1>
+        <p>Please review member information carefully before confirming deletion.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-7 col-xl-6">
+        <div class="gym-card border-danger-subtle">
+            <div class="gym-card-header bg-danger-subtle">
+                <h5 class="gym-card-title text-danger d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Confirm Deletion
+                </h5>
+            </div>
+            <div class="gym-card-body">
+                <p class="text-secondary mb-4">
+                    Are you sure you want to permanently delete the member <strong>@Model.FullName</strong>?
+                    This action might also affect their related memberships, attendance, and payment history.
+                </p>
+
+                <div class="p-3 bg-light rounded-3 mb-4 border">
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Full Name:</span>
+                        <strong class="text-dark">@Model.FullName</strong>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Phone:</span>
+                        <span class="text-dark">@Model.Phone</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Registration Date:</span>
+                        <span class="text-dark">@Model.RegistrationDate.ToString("dd MMM yyyy", englishCulture)</span>
+                    </div>
+                </div>
+
+                <form asp-action="Delete">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex align-items-center justify-content-end gap-2">
+                        <a asp-action="Index" class="btn-gym-outline">Cancel</a>
+                        <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold rounded-3 shadow-sm">
+                            <i class="bi bi-trash3-fill me-1"></i> Yes, Delete Member
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

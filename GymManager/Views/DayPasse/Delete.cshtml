@@ -1,0 +1,60 @@
+@model GymManager.Models.DayPass
+
+@{
+    ViewData["Title"] = "Delete Day Pass";
+    var englishCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+    var visitor = string.IsNullOrWhiteSpace(Model.VisitorName) ? "Guest Visitor" : Model.VisitorName;
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-title-group">
+        <a asp-action="Index" class="btn-gym-outline btn-sm mb-2">
+            <i class="bi bi-arrow-left"></i> Back to Day Passes
+        </a>
+        <h1 class="text-danger">Delete Day Pass</h1>
+        <p>Confirm deletion of this day pass entry.</p>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-7 col-xl-6">
+        <div class="gym-card border-danger-subtle">
+            <div class="gym-card-header bg-danger-subtle">
+                <h5 class="gym-card-title text-danger d-flex align-items-center gap-2">
+                    <i class="bi bi-exclamation-triangle-fill"></i> Confirm Deletion
+                </h5>
+            </div>
+            <div class="gym-card-body">
+                <p class="text-secondary mb-4">
+                    Are you sure you want to delete the day pass record for <strong>@visitor</strong>?
+                </p>
+
+                <div class="p-3 bg-light rounded-3 mb-4 border">
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Visitor:</span>
+                        <strong class="text-dark">@visitor</strong>
+                    </div>
+                    <div class="d-flex justify-content-between py-2 border-bottom">
+                        <span class="text-muted">Visit Time:</span>
+                        <span class="text-dark">@Model.VisitDateTime.ToString("dd MMM yyyy · hh:mm tt", englishCulture)</span>
+                    </div>
+                    <div class="d-flex justify-content-between py-2">
+                        <span class="text-muted">Fee:</span>
+                        <strong class="text-success">$@Model.Fee.ToString("N2", englishCulture)</strong>
+                    </div>
+                </div>
+
+                <form asp-action="Delete" method="post">
+                    <input type="hidden" asp-for="Id" />
+                    <div class="d-flex align-items-center justify-content-end gap-2">
+                        <a asp-action="Index" class="btn-gym-outline">Cancel</a>
+                        <button type="submit" class="btn btn-danger px-4 py-2 fw-semibold rounded-3 shadow-sm">
+                            <i class="bi bi-trash3-fill me-1"></i> Yes, Delete Pass
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

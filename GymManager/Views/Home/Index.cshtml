@@ -1,0 +1,80 @@
+@{
+    ViewData["Title"] = "Welcome";
+}
+
+<div class="row justify-content-center py-4">
+    <div class="col-12 col-xl-10">
+        <!-- Hero Welcome Banner -->
+        <div class="gym-card mb-4 border-0 text-white" style="background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);">
+            <div class="gym-card-body p-4 p-md-5">
+                <div class="d-inline-flex align-items-center gap-2 px-3 py-1 bg-white bg-opacity-25 rounded-pill mb-3">
+                    <span class="gym-status-pulse bg-white"></span>
+                    <span class="small fw-semibold text-white">Fitness Management SaaS</span>
+                </div>
+                <h1 class="display-6 fw-bold text-white mb-2">Welcome to GymManager</h1>
+                <p class="lead text-white-50 mb-4" style="max-width: 600px;">
+                    Your modern workspace for managing memberships, athletic programs, attendance check-ins, and club financials.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a asp-controller="Dashboard" asp-action="Index" class="btn btn-light px-4 py-2 fw-bold text-primary shadow-sm rounded-3">
+                        <i class="bi bi-grid-1x2-fill me-1"></i> Open Dashboard
+                    </a>
+                    <a asp-controller="Attendance" asp-action="Create" class="btn btn-outline-light px-4 py-2 fw-semibold rounded-3">
+                        <i class="bi bi-qr-code-scan me-1"></i> Quick Check-In
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Access Modules -->
+        <div class="row g-4">
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a asp-controller="Members" asp-action="Index" class="text-decoration-none">
+                    <div class="gym-card gym-card-hover h-100 p-4 text-center">
+                        <div class="stat-icon-box stat-icon-indigo mx-auto mb-3" style="width: 58px; height: 58px;">
+                            <i class="bi bi-people-fill fs-3"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Members</h5>
+                        <p class="text-muted small mb-0">Athlete profiles & directory</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a asp-controller="MembershipPlans" asp-action="Index" class="text-decoration-none">
+                    <div class="gym-card gym-card-hover h-100 p-4 text-center">
+                        <div class="stat-icon-box stat-icon-emerald mx-auto mb-3" style="width: 58px; height: 58px;">
+                            <i class="bi bi-card-checklist fs-3"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Plans</h5>
+                        <p class="text-muted small mb-0">Subscription tiers & pricing</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a asp-controller="Payments" asp-action="Index" class="text-decoration-none">
+                    <div class="gym-card gym-card-hover h-100 p-4 text-center">
+                        <div class="stat-icon-box stat-icon-amber mx-auto mb-3" style="width: 58px; height: 58px;">
+                            <i class="bi bi-credit-card fs-3"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Payments</h5>
+                        <p class="text-muted small mb-0">Invoices & revenue streams</p>
+                    </div>
+                </a>
+            </div>
+
+            <div class="col-12 col-sm-6 col-lg-3">
+                <a asp-controller="DayPasse" asp-action="Index" class="text-decoration-none">
+                    <div class="gym-card gym-card-hover h-100 p-4 text-center">
+                        <div class="stat-icon-box stat-icon-rose mx-auto mb-3" style="width: 58px; height: 58px;">
+                            <i class="bi bi-ticket-perforated fs-3"></i>
+                        </div>
+                        <h5 class="fw-bold text-dark mb-1">Day Passes</h5>
+                        <p class="text-muted small mb-0">Walk-ins & single entry tickets</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

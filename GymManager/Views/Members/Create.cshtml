@@ -1,0 +1,78 @@
+@model GymManager.Models.Member
+
+@{
+    ViewData["Title"] = "New Member";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-title-group">
+        <a asp-action="Index" class="btn-gym-outline btn-sm mb-2">
+            <i class="bi bi-arrow-left"></i> Back to Members
+        </a>
+        <h1>Register New Member</h1>
+        <p>Fill in the details below to add a new member to the system.</p>
+    </div>
+</div>
+
+<!-- Form Card -->
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="gym-card">
+            <div class="gym-card-header">
+                <h5 class="gym-card-title d-flex align-items-center gap-2">
+                    <i class="bi bi-person-badge-fill text-primary"></i> Member Profile Information
+                </h5>
+            </div>
+            <div class="gym-card-body">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="FullName" class="form-label">Full Name <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-person text-muted"></i></span>
+                            <input asp-for="FullName" class="form-control border-start-0" placeholder="e.g. John Doe" />
+                        </div>
+                        <span asp-validation-for="FullName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Phone" class="form-label">Phone Number <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-telephone text-muted"></i></span>
+                            <input asp-for="Phone" class="form-control border-start-0" placeholder="e.g. +1 555 123 4567" />
+                        </div>
+                        <span asp-validation-for="Phone" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="RegistrationDate" class="form-label">Registration Date <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-calendar-event text-muted"></i></span>
+                            <input asp-for="RegistrationDate" type="date" class="form-control border-start-0" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <span asp-validation-for="RegistrationDate" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="Notes" class="form-label">Notes & Special Requirements</label>
+                        <textarea asp-for="Notes" class="form-control" rows="3" placeholder="Add any health conditions, fitness goals, or administrative notes..."></textarea>
+                        <span asp-validation-for="Notes" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-end gap-2 pt-3 border-top">
+                        <a asp-action="Index" class="btn-gym-outline">Cancel</a>
+                        <button type="submit" class="btn-gym-primary">
+                            <i class="bi bi-check-lg"></i> Register Member
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,421 @@
+@model GymManager.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+    var englishCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+
+    var maxRevenue = Model.Last7DaysRevenue.Any() ? Model.Last7DaysRevenue.Max() : 0m;
+    var maxAttendance = Model.Last7DaysAttendance.Any() ? Model.Last7DaysAttendance.Max() : 0;
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-title-group">
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="gym-badge gym-badge-primary">
+                <i class="bi bi-shield-check"></i> Admin Portal
+            </span>
+            <span class="gym-badge gym-badge-success">
+                <span class="gym-status-pulse"></span> Live Data
+            </span>
+        </div>
+        <h1>Gym Overview</h1>
+        <p>Monitor your members, active plans, revenue, and daily check-ins in real time.</p>
+    </div>
+
+    <!-- Date Card & Quick Action -->
+    <div class="d-flex align-items-center gap-3">
+        <div class="d-none d-md-flex align-items-center gap-2 px-3 py-2 bg-white border rounded-3 text-secondary small shadow-sm">
+            <i class="bi bi-calendar3 text-primary"></i>
+            <span class="fw-semibold text-dark">@DateTime.Today.ToString("dddd, dd MMMM yyyy", englishCulture)</span>
+        </div>
+        <a asp-controller="Attendance" asp-action="Create" class="btn-gym-primary">
+            <i class="bi bi-qr-code-scan"></i> Quick Check-In
+        </a>
+    </div>
+</div>
+
+<!-- ================= 1. KPI Statistics Grid ================= -->
+<div class="row g-3 mb-4">
+
+    <!-- Total Members -->
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-indigo">
+                <i class="bi bi-people-fill"></i>
+            </div>
+            <div class="flex-grow-1">
+                <div class="stat-label">Total Members</div>
+                <div class="stat-value">@Model.TotalMembers</div>
+            </div>
+            <a asp-controller="Members" asp-action="Index" class="btn-action-icon" title="View Members">
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Active Memberships -->
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-emerald">
+                <i class="bi bi-patch-check-fill"></i>
+            </div>
+            <div class="flex-grow-1">
+                <div class="stat-label">Active Memberships</div>
+                <div class="stat-value text-success">@Model.ActiveMemberships</div>
+            </div>
+            <a asp-controller="Memberships" asp-action="Index" class="btn-action-icon" title="View Active">
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Expired Memberships -->
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-amber">
+                <i class="bi bi-hourglass-bottom"></i>
+            </div>
+            <div class="flex-grow-1">
+                <div class="stat-label">Expired Plans</div>
+                <div class="stat-value text-warning">@Model.ExpiredMemberships</div>
+            </div>
+            <a asp-controller="Memberships" asp-action="Index" class="btn-action-icon" title="Review Expired">
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Today's Attendance -->
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-sky">
+                <i class="bi bi-person-walking"></i>
+            </div>
+            <div class="flex-grow-1">
+                <div class="stat-label">Today's Attendance</div>
+                <div class="stat-value">@Model.TodayAttendance</div>
+            </div>
+            <a asp-controller="Attendance" asp-action="Index" class="btn-action-icon" title="View Attendance">
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Day Passes -->
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-rose">
+                <i class="bi bi-ticket-detailed-fill"></i>
+            </div>
+            <div class="flex-grow-1">
+                <div class="stat-label">Today's Day Passes</div>
+                <div class="stat-value">@Model.TodayDayPasses</div>
+            </div>
+            <a asp-controller="DayPasse" asp-action="Index" class="btn-action-icon" title="View Passes">
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </a>
+        </div>
+    </div>
+
+    <!-- Total Revenue / Payments -->
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-indigo">
+                <i class="bi bi-wallet2"></i>
+            </div>
+            <div class="flex-grow-1">
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value text-primary">$@Model.TotalPayments.ToString("N2", englishCulture)</div>
+            </div>
+            <a asp-controller="Payments" asp-action="Index" class="btn-action-icon" title="View Payments">
+                <i class="bi bi-arrow-right-short fs-5"></i>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+<!-- ================= 2. Weekly Analytics Charts ================= -->
+<div class="row g-4 mb-4">
+
+    <!-- Revenue Chart -->
+    <div class="col-12 col-xl-6">
+        <div class="gym-card h-100">
+            <div class="gym-card-header">
+                <div>
+                    <h5 class="gym-card-title d-flex align-items-center gap-2">
+                        <i class="bi bi-graph-up-arrow text-primary"></i> Revenue (Last 7 Days)
+                    </h5>
+                    <small class="text-muted">Daily payment collection trend</small>
+                </div>
+                <span class="gym-badge gym-badge-primary">
+                    Total: $@Model.Last7DaysRevenue.Sum().ToString("N2", englishCulture)
+                </span>
+            </div>
+            <div class="gym-card-body">
+                <div class="d-flex align-items-end justify-content-between gap-2 pt-3" style="height: 180px;">
+                    @for (var i = 0; i < Model.Last7DaysLabels.Count; i++)
+                    {
+                        var amount = i < Model.Last7DaysRevenue.Count ? Model.Last7DaysRevenue[i] : 0m;
+                        var barHeight = maxRevenue > 0 ? (double)(amount / maxRevenue * 100m) : 0;
+                        if (barHeight < 8 && amount > 0) { barHeight = 8; }
+
+                        <div class="d-flex flex-column align-items-center flex-grow-1 h-100 justify-content-end">
+                            <small class="text-muted fw-bold mb-1" style="font-size: 0.725rem;">
+                                @(amount > 0 ? "$" + amount.ToString("N0", englishCulture) : "-")
+                            </small>
+                            <div class="w-100 bg-light rounded-top-2 position-relative" style="height: 120px; max-width: 40px;">
+                                <div class="bg-primary rounded-top-2 position-absolute bottom-0 start-0 w-100"
+                                     style="height: @(barHeight)%; transition: height 0.5s ease;"
+                                     title="@Model.Last7DaysLabels[i]: $@amount.ToString("N2", englishCulture)">
+                                </div>
+                            </div>
+                            <span class="text-secondary small fw-semibold mt-2" style="font-size: 0.75rem;">
+                                @Model.Last7DaysLabels[i]
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Chart -->
+    <div class="col-12 col-xl-6">
+        <div class="gym-card h-100">
+            <div class="gym-card-header">
+                <div>
+                    <h5 class="gym-card-title d-flex align-items-center gap-2">
+                        <i class="bi bi-bar-chart-line-fill text-info"></i> Attendance (Last 7 Days)
+                    </h5>
+                    <small class="text-muted">Daily member visits & check-ins</small>
+                </div>
+                <span class="gym-badge gym-badge-info">
+                    Total: @Model.Last7DaysAttendance.Sum() visits
+                </span>
+            </div>
+            <div class="gym-card-body">
+                <div class="d-flex align-items-end justify-content-between gap-2 pt-3" style="height: 180px;">
+                    @for (var i = 0; i < Model.Last7DaysLabels.Count; i++)
+                    {
+                        var count = i < Model.Last7DaysAttendance.Count ? Model.Last7DaysAttendance[i] : 0;
+                        var barHeight = maxAttendance > 0 ? (double)count / maxAttendance * 100 : 0;
+                        if (barHeight < 8 && count > 0) { barHeight = 8; }
+
+                        <div class="d-flex flex-column align-items-center flex-grow-1 h-100 justify-content-end">
+                            <small class="text-muted fw-bold mb-1" style="font-size: 0.725rem;">
+                                @(count > 0 ? count.ToString() : "-")
+                            </small>
+                            <div class="w-100 bg-light rounded-top-2 position-relative" style="height: 120px; max-width: 40px;">
+                                <div class="bg-info rounded-top-2 position-absolute bottom-0 start-0 w-100"
+                                     style="height: @(barHeight)%; transition: height 0.5s ease;"
+                                     title="@Model.Last7DaysLabels[i]: @count visits">
+                                </div>
+                            </div>
+                            <span class="text-secondary small fw-semibold mt-2" style="font-size: 0.75rem;">
+                                @Model.Last7DaysLabels[i]
+                            </span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ================= 3. Expiring Memberships Alert ================= -->
+<div class="gym-card mb-4">
+    <div class="gym-card-header bg-light-subtle">
+        <div class="d-flex align-items-center gap-2">
+            <span class="text-warning fs-5"><i class="bi bi-exclamation-triangle-fill"></i></span>
+            <div>
+                <h5 class="gym-card-title">Memberships Expiring Soon</h5>
+                <small class="text-muted">Active memberships ending within the next 7 days</small>
+            </div>
+        </div>
+        <span class="gym-badge gym-badge-warning">
+            @Model.ExpiringMemberships.Count() upcoming
+        </span>
+    </div>
+
+    @if (Model.ExpiringMemberships.Any())
+    {
+        <div class="table-responsive">
+            <table class="gym-table">
+                <thead>
+                    <tr>
+                        <th>Member</th>
+                        <th>Plan</th>
+                        <th>End Date</th>
+                        <th>Price</th>
+                        <th class="text-end">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var membership in Model.ExpiringMemberships)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center"
+                                         style="width: 34px; height: 34px; font-size: 0.85rem;">
+                                        @(string.IsNullOrEmpty(membership.Member?.FullName) ? "M" : membership.Member.FullName.Substring(0, 1).ToUpper())
+                                    </div>
+                                    <span class="fw-semibold text-dark">@membership.Member.FullName</span>
+                                </div>
+                            </td>
+                            <td><span class="gym-badge gym-badge-primary">@membership.MembershipPlan.Name</span></td>
+                            <td>
+                                <span class="text-danger fw-semibold">
+                                    <i class="bi bi-clock me-1"></i>@membership.EndDate.ToString("dd MMM yyyy", englishCulture)
+                                </span>
+                            </td>
+                            <td class="fw-bold text-dark">$@membership.PriceAtPurchase.ToString("N2", englishCulture)</td>
+                            <td class="text-end">
+                                <a asp-controller="Memberships" asp-action="Details" asp-route-id="@membership.Id"
+                                   class="btn-action-icon" title="View Membership">
+                                    <i class="bi bi-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="gym-card-body text-center py-4">
+            <div class="text-success fs-1 mb-2"><i class="bi bi-check2-circle"></i></div>
+            <h6 class="fw-bold text-dark">All caught up!</h6>
+            <p class="text-muted small mb-0">No active memberships are expiring within the next 7 days.</p>
+        </div>
+    }
+</div>
+
+<!-- ================= 4. Recent Activity (Payments & Attendance) ================= -->
+<div class="row g-4 mb-4">
+
+    <!-- Recent Payments -->
+    <div class="col-12 col-xl-6">
+        <div class="gym-card h-100">
+            <div class="gym-card-header">
+                <div>
+                    <h5 class="gym-card-title d-flex align-items-center gap-2">
+                        <i class="bi bi-credit-card text-success"></i> Recent Payments
+                    </h5>
+                    <small class="text-muted">Latest transactions processed</small>
+                </div>
+                <a asp-controller="Payments" asp-action="Index" class="btn-gym-outline btn-sm py-1 px-2" style="font-size: 0.8rem;">
+                    View All <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            @if (Model.RecentPayments.Any())
+            {
+                <div class="table-responsive">
+                    <table class="gym-table">
+                        <thead>
+                            <tr>
+                                <th>Member</th>
+                                <th>Amount</th>
+                                <th>Date</th>
+                                <th>Method</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var payment in Model.RecentPayments)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold text-dark">@payment.Membership?.Member?.FullName</div>
+                                        <small class="text-muted">@payment.Membership?.MembershipPlan?.Name</small>
+                                    </td>
+                                    <td>
+                                        <span class="fw-bold text-success">
+                                            +$@payment.Amount.ToString("N2", englishCulture)
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div class="small fw-semibold text-dark">@payment.PaymentDate.ToString("dd MMM yyyy", englishCulture)</div>
+                                        <small class="text-muted" style="font-size: 0.75rem;">@payment.PaymentDate.ToString("hh:mm tt", englishCulture)</small>
+                                    </td>
+                                    <td>
+                                        <span class="gym-badge gym-badge-info">@payment.PaymentMethod</span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="gym-card-body text-center py-4">
+                    <p class="text-muted small mb-0">No recorded payments yet.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Recent Attendance -->
+    <div class="col-12 col-xl-6">
+        <div class="gym-card h-100">
+            <div class="gym-card-header">
+                <div>
+                    <h5 class="gym-card-title d-flex align-items-center gap-2">
+                        <i class="bi bi-qr-code-scan text-primary"></i> Recent Attendance
+                    </h5>
+                    <small class="text-muted">Latest member check-ins</small>
+                </div>
+                <a asp-controller="Attendance" asp-action="Index" class="btn-gym-outline btn-sm py-1 px-2" style="font-size: 0.8rem;">
+                    View All <i class="bi bi-arrow-right"></i>
+                </a>
+            </div>
+
+            @if (Model.RecentAttendance.Any())
+            {
+                <div class="table-responsive">
+                    <table class="gym-table">
+                        <thead>
+                            <tr>
+                                <th>Member</th>
+                                <th>Phone</th>
+                                <th>Check-in Date & Time</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var attendance in Model.RecentAttendance)
+                            {
+                                <tr>
+                                    <td>
+                                        <div class="fw-semibold text-dark">@attendance.Member?.FullName</div>
+                                    </td>
+                                    <td>
+                                        <span class="text-secondary small">
+                                            <i class="bi bi-telephone me-1 text-muted"></i>@attendance.Member?.Phone
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <span class="gym-badge gym-badge-primary">
+                                            <i class="bi bi-clock me-1"></i>@attendance.CheckInDateTime.ToString("dd MMM · hh:mm tt", englishCulture)
+                                        </span>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="gym-card-body text-center py-4">
+                    <p class="text-muted small mb-0">No check-ins recorded yet.</p>
+                </div>
+            }
+        </div>
+    </div>
+
+</div>

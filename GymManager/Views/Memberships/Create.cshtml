@@ -1,0 +1,70 @@
+@model GymManager.Models.Membership
+
+@{
+    ViewData["Title"] = "New Membership";
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-title-group">
+        <a asp-action="Index" class="btn-gym-outline btn-sm mb-2">
+            <i class="bi bi-arrow-left"></i> Back to Memberships
+        </a>
+        <h1>Create Membership Subscription</h1>
+        <p>Assign a membership plan to an athlete and activate their pass.</p>
+    </div>
+</div>
+
+<!-- Form Card -->
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-8 col-xl-7">
+        <div class="gym-card">
+            <div class="gym-card-header">
+                <h5 class="gym-card-title d-flex align-items-center gap-2">
+                    <i class="bi bi-person-badge-fill text-primary"></i> Subscription Details
+                </h5>
+            </div>
+            <div class="gym-card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="MemberId" class="form-label">Select Member <span class="text-danger">*</span></label>
+                        <select asp-for="MemberId" asp-items="@(ViewBag.Members)" class="form-select">
+                            <option value="">-- Select Member --</option>
+                        </select>
+                        <span asp-validation-for="MemberId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="MembershipPlanId" class="form-label">Select Membership Plan <span class="text-danger">*</span></label>
+                        <select asp-for="MembershipPlanId" asp-items="@(ViewBag.MembershipPlans)" class="form-select">
+                            <option value="">-- Select Plan --</option>
+                        </select>
+                        <span asp-validation-for="MembershipPlanId" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label asp-for="StartDate" class="form-label">Subscription Start Date <span class="text-danger">*</span></label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-light border-end-0"><i class="bi bi-calendar-event text-muted"></i></span>
+                            <input asp-for="StartDate" type="date" class="form-control border-start-0" value="@DateTime.Today.ToString("yyyy-MM-dd")" />
+                        </div>
+                        <span asp-validation-for="StartDate" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex align-items-center justify-content-end gap-2 pt-3 border-top">
+                        <a asp-action="Index" class="btn-gym-outline">Cancel</a>
+                        <button type="submit" class="btn-gym-primary">
+                            <i class="bi bi-check-lg"></i> Activate Membership
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

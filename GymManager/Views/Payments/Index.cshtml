@@ -1,0 +1,250 @@
+@model IEnumerable<GymManager.Models.Payment>
+
+@{
+    ViewData["Title"] = "Payments";
+    var englishCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+
+    var todayPayments = Model.Where(p => p.PaymentDate.Date == DateTime.Today).ToList();
+    var todayRevenue = todayPayments.Sum(p => p.Amount);
+    var totalCollected = Model.Sum(p => p.Amount);
+    var totalCount = Model.Count();
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-title-group">
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="gym-badge gym-badge-primary">
+                <i class="bi bi-credit-card-fill"></i> Financial Portal
+            </span>
+            <span class="gym-badge gym-badge-success">
+                Today: $@todayRevenue.ToString("N2", englishCulture) (@todayPayments.Count transactions)
+            </span>
+        </div>
+        <h1>Payments & Invoices</h1>
+        <p>Monitor revenue transactions, payment methods, and member billing receipts.</p>
+    </div>
+
+    <div>
+        <a asp-action="Create" class="btn-gym-primary">
+            <i class="bi bi-cash-stack"></i> Record New Payment
+        </a>
+    </div>
+</div>
+
+<!-- Financial KPI Summary Cards -->
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-emerald">
+                <i class="bi bi-calendar2-check-fill"></i>
+            </div>
+            <div>
+                <div class="stat-label">Collected Today</div>
+                <div class="stat-value text-success">$@todayRevenue.ToString("N2", englishCulture)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-indigo">
+                <i class="bi bi-wallet2"></i>
+            </div>
+            <div>
+                <div class="stat-label">Total Revenue</div>
+                <div class="stat-value text-primary">$@totalCollected.ToString("N2", englishCulture)</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4">
+        <div class="stat-card">
+            <div class="stat-icon-box stat-icon-sky">
+                <i class="bi bi-receipt"></i>
+            </div>
+            <div>
+                <div class="stat-label">Total Transactions</div>
+                <div class="stat-value text-dark">@totalCount Receipts</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search & Method Filter -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+    <!-- Filter Tabs -->
+    <div class="btn-group bg-white p-1 rounded-3 border shadow-sm" role="group" id="paymentsFilterGroup">
+        <button type="button" class="btn btn-sm btn-light fw-bold active text-primary" data-filter="all">
+            All Payments (@totalCount)
+        </button>
+        <button type="button" class="btn btn-sm btn-light fw-semibold text-secondary" data-filter="today">
+            <span class="gym-status-pulse d-inline-block me-1" style="width:6px;height:6px;"></span> Today (@todayPayments.Count)
+        </button>
+        <button type="button" class="btn btn-sm btn-light fw-semibold text-secondary" data-filter="cash">
+            Cash
+        </button>
+        <button type="button" class="btn btn-sm btn-light fw-semibold text-secondary" data-filter="card">
+            Card
+        </button>
+    </div>
+
+    <!-- Quick Search -->
+    <div class="input-group" style="max-width: 280px;">
+        <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+        <input type="text" id="paymentSearchInput" class="form-control border-start-0 bg-white" placeholder="Search member or ID..." />
+    </div>
+</div>
+
+<!-- Table Card -->
+<div class="gym-card">
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="gym-table" id="paymentsTable">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Member</th>
+                        <th>Membership Plan</th>
+                        <th>Amount Paid</th>
+                        <th>Transaction Date</th>
+                        <th>Method</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var isToday = item.PaymentDate.Date == DateTime.Today;
+                        var initial = string.IsNullOrEmpty(item.Membership?.Member?.FullName) ? "M" : item.Membership.Member.FullName.Substring(0, 1).ToUpper();
+                        var methodCategory = (item.PaymentMethod ?? "").ToLower().Contains("card") ? "card" : "cash";
+                        var rowFilterCategory = isToday ? "today " + methodCategory : methodCategory;
+
+                        <tr class="payment-row"
+                            data-filter="@rowFilterCategory"
+                            data-name="@(item.Membership?.Member?.FullName?.ToLower() ?? "")"
+                            data-phone="@(item.Membership?.Member?.Phone ?? "")"
+                            data-id="@item.Id">
+
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle text-success fw-bold d-flex align-items-center justify-content-center"
+                                         style="width: 38px; height: 38px; font-size: 0.95rem; background-color: #ecfdf5;">
+                                        @initial
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">@(item.Membership?.Member?.FullName ?? "Unknown Member")</div>
+                                        <small class="text-muted"><i class="bi bi-telephone me-1"></i>@(item.Membership?.Member?.Phone ?? "-")</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="gym-badge gym-badge-primary">
+                                    <i class="bi bi-award me-1"></i>@(item.Membership?.MembershipPlan?.Name ?? "Subscription")
+                                </span>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-success fs-6">
+                                    +$@item.Amount.ToString("N2", englishCulture)
+                                </span>
+                            </td>
+                            <td>
+                                <div>
+                                    <span class="fw-semibold text-dark">
+                                        @item.PaymentDate.ToString("dd MMM yyyy", englishCulture)
+                                    </span>
+                                    <small class="text-muted ms-1">@item.PaymentDate.ToString("hh:mm tt", englishCulture)</small>
+                                    @if (isToday)
+                                    {
+                                        <span class="gym-badge gym-badge-success py-0 px-2 ms-1" style="font-size: 0.7rem;">Today</span>
+                                    }
+                                </div>
+                            </td>
+                            <td>
+                                <span class="gym-badge gym-badge-info">
+                                    <i class="bi bi-credit-card me-1"></i>@item.PaymentMethod
+                                </span>
+                            </td>
+                            <td class="text-end pe-4">
+                                <div class="d-inline-flex gap-1">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn-action-icon" title="View Receipt">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn-action-icon" title="Edit Payment">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn-action-icon delete" title="Delete Payment">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="gym-card-body text-center py-5">
+            <div class="text-muted fs-1 mb-3"><i class="bi bi-wallet2"></i></div>
+            <h5 class="fw-bold text-dark">No payments recorded</h5>
+            <p class="text-muted mb-4">Record member subscription fees and walk-in payments to manage financials.</p>
+            <a asp-action="Create" class="btn-gym-primary">
+                <i class="bi bi-cash-stack"></i> Record First Payment
+            </a>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('#paymentsFilterGroup button');
+            const searchInput = document.getElementById('paymentSearchInput');
+            const rows = document.querySelectorAll('.payment-row');
+
+            let currentFilter = 'all';
+            let currentSearch = '';
+
+            function applyFilters() {
+                rows.forEach(row => {
+                    const rowFilter = row.getAttribute('data-filter') || '';
+                    const rowName = row.getAttribute('data-name') || '';
+                    const rowPhone = row.getAttribute('data-phone') || '';
+                    const rowId = row.getAttribute('data-id') || '';
+
+                    const matchesFilter = (currentFilter === 'all') || rowFilter.includes(currentFilter);
+                    const matchesSearch = !currentSearch || rowName.includes(currentSearch) || rowPhone.includes(currentSearch) || rowId.includes(currentSearch);
+
+                    if (matchesFilter && matchesSearch) {
+                        row.style.display = '';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterButtons.forEach(b => {
+                        b.classList.remove('active', 'text-primary');
+                        b.classList.add('text-secondary');
+                    });
+                    this.classList.add('active', 'text-primary');
+                    this.classList.remove('text-secondary');
+
+                    currentFilter = this.getAttribute('data-filter');
+                    applyFilters();
+                });
+            });
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    currentSearch = this.value.trim().toLowerCase();
+                    applyFilters();
+                });
+            }
+        });
+    </script>
+}

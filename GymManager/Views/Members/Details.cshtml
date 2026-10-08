@@ -1,0 +1,99 @@
+@model GymManager.Models.Member
+
+@{
+    ViewData["Title"] = "Member Details";
+    var englishCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+    var initial = string.IsNullOrEmpty(Model.FullName) ? "M" : Model.FullName.Substring(0, 1).ToUpper();
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-title-group">
+        <a asp-action="Index" class="btn-gym-outline btn-sm mb-2">
+            <i class="bi bi-arrow-left"></i> Back to Members
+        </a>
+        <h1>Member Profile</h1>
+        <p>Comprehensive overview of athlete personal details and account status.</p>
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn-gym-primary">
+            <i class="bi bi-pencil-square"></i> Edit Profile
+        </a>
+        <a asp-action="Delete" asp-route-id="@Model?.Id" class="btn-gym-outline text-danger">
+            <i class="bi bi-trash3"></i> Delete
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-9 col-xl-8">
+        
+        <!-- Profile Summary Header Card -->
+        <div class="gym-card mb-4">
+            <div class="gym-card-body d-flex flex-wrap align-items-center justify-content-between gap-3">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center"
+                         style="width: 64px; height: 64px; font-size: 1.6rem;">
+                        @initial
+                    </div>
+                    <div>
+                        <h3 class="fw-bold text-dark mb-1">@Model.FullName</h3>
+                        <div class="d-flex flex-wrap align-items-center gap-2">
+                            <span class="gym-badge gym-badge-primary">Member ID: #@Model.Id.ToString("D4")</span>
+                            <span class="text-muted small">
+                                <i class="bi bi-calendar3 me-1"></i> Joined @Model.RegistrationDate.ToString("dd MMMM yyyy", englishCulture)
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Grid -->
+        <div class="gym-card">
+            <div class="gym-card-header">
+                <h5 class="gym-card-title d-flex align-items-center gap-2">
+                    <i class="bi bi-info-circle text-primary"></i> Account Information
+                </h5>
+            </div>
+            <div class="gym-card-body">
+                <div class="row g-4">
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-muted small text-uppercase">Full Name</label>
+                        <div class="fw-bold fs-6 text-dark">@Model.FullName</div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-muted small text-uppercase">Phone Number</label>
+                        <div class="fw-bold fs-6 text-dark">
+                            <i class="bi bi-telephone text-primary me-1"></i>@Model.Phone
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-muted small text-uppercase">Registration Date</label>
+                        <div class="fw-bold fs-6 text-dark">
+                            <i class="bi bi-calendar-check text-success me-1"></i>@Model.RegistrationDate.ToString("dddd, dd MMMM yyyy", englishCulture)
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-6">
+                        <label class="form-label text-muted small text-uppercase">Special Notes & Medical Info</label>
+                        <div class="text-secondary">
+                            @if (!string.IsNullOrEmpty(Model.Notes))
+                            {
+                                @Model.Notes
+                            }
+                            else
+                            {
+                                <span class="text-muted fst-italic">No additional notes provided.</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

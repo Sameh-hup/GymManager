@@ -1,0 +1,281 @@
+@model IEnumerable<GymManager.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Attendance";
+    var englishCulture = System.Globalization.CultureInfo.GetCultureInfo("en-US");
+
+    var todayRecords = Model.Where(a => a.CheckInDateTime.Date == DateTime.Today).ToList();
+    var yesterdayRecords = Model.Where(a => a.CheckInDateTime.Date == DateTime.Today.AddDays(-1)).ToList();
+    var todayCount = todayRecords.Count;
+    var totalCount = Model.Count();
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="page-title-group">
+        <div class="d-flex align-items-center gap-2 mb-1">
+            <span class="gym-badge gym-badge-primary">
+                <i class="bi bi-qr-code-scan"></i> Reception Cockpit
+            </span>
+            <span class="gym-badge gym-badge-success">
+                <span class="gym-status-pulse"></span> @todayCount Check-ins Today
+            </span>
+        </div>
+        <h1>Daily Member Attendance</h1>
+        <p>Real-time reception log focusing on today's check-ins with quick registration.</p>
+    </div>
+</div>
+
+<!-- ================= Quick Check-in Bar ================= -->
+<div class="gym-card mb-4 bg-light-subtle border-primary-subtle">
+    <div class="gym-card-body p-3">
+        <form asp-action="Create" method="post" class="row g-2 align-items-center">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="CheckInDateTime" value="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+
+            <div class="col-12 col-md-5">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-person-check-fill text-primary"></i></span>
+                    <select name="MemberId" asp-items="@(ViewBag.Members)" class="form-select" required>
+                        <option value="">-- Quick Check-In: Select Member --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="input-group">
+                    <span class="input-group-text bg-white"><i class="bi bi-card-text text-muted"></i></span>
+                    <input type="text" name="Notes" class="form-control" placeholder="Note (e.g. Locker #5, Guest, PT)..." />
+                </div>
+            </div>
+
+            <div class="col-12 col-md-3 d-grid">
+                <button type="submit" class="btn btn-gym-primary justify-content-center">
+                    <i class="bi bi-lightning-charge-fill"></i> Check In Now
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- ================= Date Filter Tabs & Search ================= -->
+<div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+    <!-- Day Filter Tabs -->
+    <div class="btn-group bg-white p-1 rounded-3 border shadow-sm" role="group" id="attendanceFilterGroup">
+        <button type="button" class="btn btn-sm btn-light fw-bold active text-primary" data-filter="today">
+            <span class="gym-status-pulse d-inline-block me-1" style="width:6px;height:6px;"></span> Today (@todayCount)
+        </button>
+        <button type="button" class="btn btn-sm btn-light fw-semibold text-secondary" data-filter="yesterday">
+            Yesterday (@yesterdayRecords.Count)
+        </button>
+        <button type="button" class="btn btn-sm btn-light fw-semibold text-secondary" data-filter="all">
+            All History (@totalCount)
+        </button>
+    </div>
+
+    <!-- Date Picker & Live Search -->
+    <div class="d-flex align-items-center gap-2 flex-grow-1 justify-content-md-end" style="max-width: 480px;">
+        <input type="date" id="dateSpecificPicker" class="form-control form-control-sm bg-white" style="max-width: 160px;" title="Pick specific date" />
+        
+        <div class="input-group input-group-sm flex-grow-1">
+            <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+            <input type="text" id="attendanceSearchInput" class="form-control border-start-0 bg-white" placeholder="Search member or phone..." />
+        </div>
+    </div>
+</div>
+
+<!-- ================= Table Card ================= -->
+<div class="gym-card">
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="gym-table" id="attendanceTable">
+                <thead>
+                    <tr>
+                        <th class="ps-4">Member</th>
+                        <th>Phone</th>
+                        <th>Check-in Time</th>
+                        <th>Date</th>
+                        <th>Notes</th>
+                        <th class="text-end pe-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var isToday = item.CheckInDateTime.Date == DateTime.Today;
+                        var isYesterday = item.CheckInDateTime.Date == DateTime.Today.AddDays(-1);
+                        var initial = string.IsNullOrEmpty(item.Member?.FullName) ? "M" : item.Member.FullName.Substring(0, 1).ToUpper();
+
+                        var dayCategory = isToday ? "today" : (isYesterday ? "yesterday" : "older");
+                        var isoDate = item.CheckInDateTime.ToString("yyyy-MM-dd");
+
+                        <tr class="attendance-row"
+                            data-day="@dayCategory"
+                            data-isodate="@isoDate"
+                            data-name="@(item.Member?.FullName?.ToLower() ?? "")"
+                            data-phone="@(item.Member?.Phone ?? "")">
+
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle bg-primary-subtle text-primary fw-bold d-flex align-items-center justify-content-center"
+                                         style="width: 38px; height: 38px; font-size: 0.95rem;">
+                                        @initial
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark">@(item.Member?.FullName ?? "Unknown Member")</div>
+                                        <small class="text-muted">ID: #@item.MemberId.ToString("D4")</small>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <td>
+                                <span class="text-secondary small">
+                                    <i class="bi bi-telephone me-1 text-muted"></i>@(item.Member?.Phone ?? "-")
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="gym-badge gym-badge-primary fs-6">
+                                    <i class="bi bi-clock me-1"></i>@item.CheckInDateTime.ToString("hh:mm tt", englishCulture)
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="fw-semibold text-dark">
+                                        @item.CheckInDateTime.ToString("dd MMM yyyy", englishCulture)
+                                    </span>
+                                    @if (isToday)
+                                    {
+                                        <span class="gym-badge gym-badge-success py-0 px-2" style="font-size: 0.7rem;">Today</span>
+                                    }
+                                </div>
+                            </td>
+
+                            <td>
+                                @if (!string.IsNullOrWhiteSpace(item.Notes))
+                                {
+                                    <span class="text-muted small text-truncate d-inline-block" style="max-width: 200px;" title="@item.Notes">
+                                        @item.Notes
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted fst-italic small">-</span>
+                                }
+                            </td>
+
+                            <td class="text-end pe-4">
+                                <div class="d-inline-flex gap-1">
+                                    <a asp-action="Details" asp-route-id="@item.Id" class="btn-action-icon" title="View Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@item.Id" class="btn-action-icon" title="Edit Record">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn-action-icon delete" title="Delete Record">
+                                        <i class="bi bi-trash3"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="gym-card-body text-center py-5">
+            <div class="text-muted fs-1 mb-3"><i class="bi bi-qr-code-scan"></i></div>
+            <h5 class="fw-bold text-dark">No check-ins recorded</h5>
+            <p class="text-muted mb-4">Select a member above and click "Check In Now" to log their gym visit.</p>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const filterButtons = document.querySelectorAll('#attendanceFilterGroup button');
+            const searchInput = document.getElementById('attendanceSearchInput');
+            const datePicker = document.getElementById('dateSpecificPicker');
+            const rows = document.querySelectorAll('.attendance-row');
+
+            let currentFilter = 'today'; // Default focused on TODAY!
+            let currentSearch = '';
+            let specificDate = '';
+
+            function applyFilters() {
+                let visibleCount = 0;
+                rows.forEach(row => {
+                    const rowDay = row.getAttribute('data-day') || '';
+                    const rowIsoDate = row.getAttribute('data-isodate') || '';
+                    const rowName = row.getAttribute('data-name') || '';
+                    const rowPhone = row.getAttribute('data-phone') || '';
+
+                    let matchesFilter = true;
+
+                    if (specificDate) {
+                        matchesFilter = (rowIsoDate === specificDate);
+                    } else if (currentFilter === 'today') {
+                        matchesFilter = (rowDay === 'today');
+                    } else if (currentFilter === 'yesterday') {
+                        matchesFilter = (rowDay === 'yesterday');
+                    } else if (currentFilter === 'all') {
+                        matchesFilter = true;
+                    }
+
+                    const matchesSearch = !currentSearch || rowName.includes(currentSearch) || rowPhone.includes(currentSearch);
+
+                    if (matchesFilter && matchesSearch) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            }
+
+            // Apply default initial filter (Today)
+            applyFilters();
+
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    filterButtons.forEach(b => {
+                        b.classList.remove('active', 'text-primary');
+                        b.classList.add('text-secondary');
+                    });
+                    this.classList.add('active', 'text-primary');
+                    this.classList.remove('text-secondary');
+
+                    currentFilter = this.getAttribute('data-filter');
+                    specificDate = '';
+                    if (datePicker) datePicker.value = '';
+                    applyFilters();
+                });
+            });
+
+            if (datePicker) {
+                datePicker.addEventListener('change', function() {
+                    specificDate = this.value;
+                    if (specificDate) {
+                        filterButtons.forEach(b => {
+                            b.classList.remove('active', 'text-primary');
+                            b.classList.add('text-secondary');
+                        });
+                    }
+                    applyFilters();
+                });
+            }
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    currentSearch = this.value.trim().toLowerCase();
+                    applyFilters();
+                });
+            }
+        });
+    </script>
+}
